@@ -618,7 +618,7 @@ class PrestaShopWebServiceDict(PrestaShopWebService):
         for key in complete_content:
             if fields.get(key):
                 complete_content[key].update(fields[key])
-            if blacklist_fields.get(key):
+            if key in blacklist_fields:
                 complete_content.pop(key)
         return self.edit(resource, complete_content)
 
