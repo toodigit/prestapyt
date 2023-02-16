@@ -618,8 +618,9 @@ class PrestaShopWebServiceDict(PrestaShopWebService):
         for key in complete_content:
             if fields.get(key):
                 complete_content[key].update(fields[key])
-            if key in blacklist_fields:
-                complete_content.pop(key)
+            for field in blacklist_fields:
+                if complete_content[key].get(field):
+                    complete_content[key].pop(field)
         return self.edit(resource, complete_content)
 
     def add_with_url(self, url, content=None, files=None):
