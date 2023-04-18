@@ -220,7 +220,7 @@ class PrestaShopWebService(object):
                     "Please upgrade/downgrade this library") % (version,))
         return True
 
-    def _execute(self, url, method, data=None, add_headers=None):
+    def _execute(self, url, method, data=None, json=None, add_headers=None):
         """Execute a request on the PrestaShop Webservice.
 
         :param url: full url to call
@@ -244,6 +244,7 @@ class PrestaShopWebService(object):
                 method,
                 url,
                 data=data,
+                json=json,
                 headers=request_headers,
             )
         finally:
@@ -597,7 +598,7 @@ class PrestaShopWebServiceDict(PrestaShopWebService):
         complete_content = dict(blank_envelope, **fields)
         return self.add(resource, complete_content)
 
-    def partial_edit(self, resource, resource_id, fields, blacklist_fields):
+    def partial_edit(self, resource, resource_id, fields):
         """Edit (PUT) partially a resource.
         Standard REST PUT means a full replacement of the resource.
         Allows to edit only only some fields of the resource with
@@ -608,17 +609,12 @@ class PrestaShopWebServiceDict(PrestaShopWebService):
         :param resource_id: id of the resource to edit
         :param fields: dict containing the field name as key
             and the values of the files to modify
-        :param blacklist_fields: list containing fields to remove
-            in content
         :return: an ElementTree of the Webservice's response
         """
         complete_content = self.get(resource, resource_id)
         for key in complete_content:
             if fields.get(key):
                 complete_content[key].update(fields[key])
-            for field in blacklist_fields:
-                if complete_content[key].get(field):
-                    complete_content[key].pop(field)
         return self.edit(resource, complete_content)
 
     def add_with_url(self, url, content=None, files=None):
